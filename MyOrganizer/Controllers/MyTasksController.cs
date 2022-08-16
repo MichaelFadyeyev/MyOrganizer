@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MyOrganizer.Data;
 using MyOrganizer.Models;
 using MyOrganizer.ViewModels;
+using System.Security.Claims;
 
 namespace MyOrganizer.Controllers
 {
@@ -21,24 +22,26 @@ namespace MyOrganizer.Controllers
         }
 
         // GET: MyTasks
-        public async Task<IActionResult> Index(int? categoryId, string userName, string userId, int pageNumber = 1)
+        public async Task<IActionResult> Index([Bind("AppUser.Name")] int? categoryId, int? statusState, string userName, TasksViewModel tvm, int pageNumber = 1)
         {
-            AppUser appUser;
+            if (userName == null) userName = tvm.AppUser.UserName;
 
-            if (userName == null)
-            {
-                appUser = _context.AppUsers.Single(u => u.Id == userId);
-            }
-            else
-            {
-                appUser = _context.AppUsers.Single(u => u.UserName == userName);
-            }
-
+            var appUser = _context.AppUsers.Single(u => u.UserName == userName);
             var tasks = _context.Tasks.Where(t => t.AppUser == appUser).Include(t => t.Category).ToList();
 
+            // фільтрація за категорією
             if (categoryId != null && categoryId != 0)
             {
                 tasks = tasks.Where(t => t.CategoryId == categoryId).ToList();
+            }
+
+            // фільтрація за статусом
+            if (statusState != null && statusState != 0)
+            {
+                bool status;
+                _ = statusState == 1 ? status = default : status = true;
+
+                tasks = tasks.Where(t => t.CategoryId == categoryId && t.IsDone == status).ToList();
             }
 
             int pageSize = 3;
@@ -47,18 +50,23 @@ namespace MyOrganizer.Controllers
             List<Category> categories = await _context.Categories.ToListAsync();
             categories.Insert(0, new Category() { Id = 0, Name = "Всі категорії" });
 
-            PageViewModel paginator = new(count, pageNumber, pageSize);
+            List<Category> stausStates = new List<Category>();
+            stausStates.Insert(0, new Category { Id = 0, Name = "Всі задачи" });
+            stausStates.Insert(1, new Category { Id = 1, Name = "Заплановані" });
+            stausStates.Insert(2, new Category { Id = 2, Name = "Завершені" });
+
+            PageViewModel paginator = new(count, pageNumber, pageSize, userName);
 
             TasksViewModel viewModel = new()
             {
                 Tasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(),
-                Categories = new SelectList(categories, "Id", "Name"),
+                Categories = new SelectList(categories, "Id", "Name", categoryId),
                 AppUser = appUser,
-                Paginator = paginator
+                Paginator = paginator,
+                StatusStates = new SelectList(stausStates, "Id", "Name", statusState)
+
             };
 
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["AppUserId"] = _context.AppUsers.Single(u => u.UserName == userName).Id;
             return View(viewModel);
         }
 

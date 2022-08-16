@@ -16,22 +16,22 @@ namespace MyOrganizer.Models
 
         [Required]
         [MaxLength(256)]
-        [Display(Name = "Опис задачи")]
+        [Display(Name = "Опис")]
         public string Content { get; set; }
 
 
         [Required]
         [DataType(DataType.Date)]
-        [Display(Name = "Запланована дата")]
+        [Display(Name = "Дата")]
         public DateTime PublishDate { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
-        [Display(Name = "Запланований час")]
+        [Display(Name = "Час")]
         public DateTime PublishTime { get; set; }
 
         //[Required]
-        [Display(Name = "Категорія задачи")]
+        [Display(Name = "Категорія")]
         public int CategoryId { get; set; }
 
         //[Required]

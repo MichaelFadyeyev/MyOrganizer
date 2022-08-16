@@ -64,7 +64,7 @@ namespace MyBlog.TagHelpers
             if (pageNumber == PageModel.PageNumber)
                 item.AddCssClass("active");
             else
-                link.Attributes["href"] = urlHelper.Action(PageAction, new {pageNumber = pageNumber});
+                link.Attributes["href"] = urlHelper.Action(PageAction, new {pageNumber = pageNumber, userName = PageModel.UserName});
             //
             item.AddCssClass("page-item");
             item.AddCssClass("page-link");

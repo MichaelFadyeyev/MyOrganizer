@@ -10,10 +10,12 @@ namespace MyOrganizer.ViewModels
     {
         public int PageNumber { get; set; }
         public int TotalPages { get; set; }
-        public PageViewModel(int count, int pageNumber, int pageSize)
+        public string UserName { get; set; }
+        public PageViewModel(int count, int pageNumber, int pageSize, string userName)
         {
             PageNumber = pageNumber;
             TotalPages = (int)Math.Ceiling((double)count / pageSize);
+            UserName = userName;
         }
 
         public bool HasPreviousPage => PageNumber > 1;

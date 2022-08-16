@@ -14,6 +14,7 @@ namespace MyOrganizer.ViewModels
         public SelectList Categories { get; set; }
         public AppUser AppUser { get; set; }
         public PageViewModel Paginator { get; set; }
+        public SelectList StatusStates { get; set; }
 
     }
 }

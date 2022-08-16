@@ -1,5 +1,5 @@
 ﻿@model MyOrganizer.ViewModels.TasksViewModel
-@*@addTagHelper *, MyOrganizer*@
+@addTagHelper *, MyOrganizer
 
 @{
     ViewData["Title"] = "Перегляд задач";
@@ -18,10 +18,14 @@
 
 <form method="get">
     <div class="form-inline form-group">
+        <input asp-for="AppUser.UserName" type="hidden" value=@userName />
         <label class="control-label">Категорія:</label>
         &nbsp;&nbsp;
         <select name="categoryId" asp-items="Model.Categories" class="form-control"></select>
-        <input type="hidden" asp-for="AppUser.Id" value=@ViewBag.AppUserId />
+        &nbsp;&nbsp;&nbsp;
+        <label class="control-label">Статус:</label>
+        &nbsp;&nbsp;
+        <select name="statusState" asp-items="Model.StatusStates" class="form-control"></select>
         &nbsp;&nbsp;&nbsp;
         <input type="submit" value="Обрати" class="btn btn-success" />
     </div>
@@ -84,4 +88,4 @@
     </tbody>
 </table>
 <br />
-@*<page-link page-model="Model.Paginator" page-action="Index" data-container="@userName"></page-link>*@
+<page-link page-model="Model.Paginator" page-action="Index" ></page-link>
