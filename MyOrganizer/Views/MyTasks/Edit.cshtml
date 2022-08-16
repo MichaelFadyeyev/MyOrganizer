@@ -1,0 +1,72 @@
+﻿@model MyOrganizer.Models.MyTask
+
+@{
+    ViewData["Title"] = "Редагувати задачу";
+    string userName = User.Identity.Name;
+
+    void ChangeStatus(Object sender, EventArgs e)
+    {
+        Model.IsDone = !Model.IsDone;
+    }
+}
+
+<div class="row">
+    <div class="col-6"><h1>Редагувати задачу</h1></div>
+    <div class="col-6" style="text-align: right;">
+        <h2 style="margin-top:8px;">@userName</h2>
+    </div>
+</div>
+<hr />
+
+<div class="row">
+    < class="col-md-4">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="AppUserId" value=@ViewBag.AppUserId />
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="control-label"></label>
+            <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PublishDate" class="control-label"></label>
+            <input asp-for="PublishDate" class="form-control" />
+            <span asp-validation-for="PublishDate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PublishTime" class="control-label"></label>
+            <input asp-for="PublishTime" class="form-control" />
+            <span asp-validation-for="PublishTime" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CategoryId" class="control-label"></label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="IsDone" class="control-label">Завдання виконане</label>
+            <input asp-for="IsDone" type="checkbox" id="isDoneCheck" onchange="ChangeStatus" />
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Зберігти" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+
+<div>
+    <a asp-action="Index" asp-route-userName=@User.Identity.Name>Повернутися до переліку задач</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

@@ -1,0 +1,87 @@
+﻿@model MyOrganizer.ViewModels.TasksViewModel
+@*@addTagHelper *, MyOrganizer*@
+
+@{
+    ViewData["Title"] = "Перегляд задач";
+    string userName = User.Identity.Name;
+}
+<div class="row">
+    <div class="col-6"><h1>Перегляд задач</h1></div>
+    <div class="col-6" style="text-align: right;">
+        <h2 style="margin-top:8px;">@userName</h2>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create" asp-route-userName=@userName>Створити задачу</a>
+</p>
+
+<form method="get">
+    <div class="form-inline form-group">
+        <label class="control-label">Категорія:</label>
+        &nbsp;&nbsp;
+        <select name="categoryId" asp-items="Model.Categories" class="form-control"></select>
+        <input type="hidden" asp-for="AppUser.Id" value=@ViewBag.AppUserId />
+        &nbsp;&nbsp;&nbsp;
+        <input type="submit" value="Обрати" class="btn btn-success" />
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Tasks.First().Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tasks.First().PublishDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tasks.First().PublishTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tasks.First().Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tasks.First().IsDone)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var task in Model.Tasks)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelTask => task.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelTask => task.PublishDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelTask => task.PublishTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelTask => task.Category.Name)
+                </td>
+                <th>
+                    @if (task.IsDone)
+                    {
+                        <p style="color: forestgreen">Завершена</p>
+                    }
+                    else
+                    {
+                        <p style="color: orangered">Запланована</p>
+                    }
+                </th>
+                <td style="text-align: right;">
+                    <a asp-action="Edit" asp-route-id="@task.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@task.Id">Переглянути</a> |
+                    <a asp-action="Delete" asp-route-id="@task.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+@*<page-link page-model="Model.Paginator" page-action="Index" data-container="@userName"></page-link>*@

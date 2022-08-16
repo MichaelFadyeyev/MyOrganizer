@@ -1,0 +1,53 @@
+﻿@model MyOrganizer.Models.MyTask
+
+@{
+    ViewData["Title"] = "Переглянути задачу";
+    string userName = User.Identity.Name;
+}
+
+<div class="row">
+    <div class="col-6"><h1>Переглянути задачу</h1></div>
+    <div class="col-6" style="text-align: right;">
+        <h2 style="margin-top:8px;">@userName</h2>
+    </div>
+</div>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PublishDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PublishDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PublishTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PublishTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Редагувати</a> |
+    <a asp-action="Index" asp-route-userName=@User.Identity.Name>Повернутися до переліку задач</a>
+</div>
