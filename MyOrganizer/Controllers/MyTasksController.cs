@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using MyOrganizer.Data;
 using MyOrganizer.Models;
 using MyOrganizer.ViewModels;
-using System.Security.Claims;
+using MyOrganizer.ViewModels.Templates;
 
 namespace MyOrganizer.Controllers
 {
@@ -41,7 +41,7 @@ namespace MyOrganizer.Controllers
                 bool status;
                 _ = statusState == 1 ? status = default : status = true;
 
-                tasks = tasks.Where(t => t.CategoryId == categoryId && t.IsDone == status).ToList();
+                tasks = tasks.Where(t => t.IsDone == status).ToList();
             }
 
             int pageSize = 3;
@@ -50,10 +50,8 @@ namespace MyOrganizer.Controllers
             List<Category> categories = await _context.Categories.ToListAsync();
             categories.Insert(0, new Category() { Id = 0, Name = "Всі категорії" });
 
-            List<Category> stausStates = new List<Category>();
-            stausStates.Insert(0, new Category { Id = 0, Name = "Всі задачи" });
-            stausStates.Insert(1, new Category { Id = 1, Name = "Заплановані" });
-            stausStates.Insert(2, new Category { Id = 2, Name = "Завершені" });
+            var sst = new StatusStatesTemplate().Template;
+            var trt = new TimeRangesTemplate().Template;
 
             PageViewModel paginator = new(count, pageNumber, pageSize, userName);
 
@@ -63,8 +61,8 @@ namespace MyOrganizer.Controllers
                 Categories = new SelectList(categories, "Id", "Name", categoryId),
                 AppUser = appUser,
                 Paginator = paginator,
-                StatusStates = new SelectList(stausStates, "Id", "Name", statusState)
-
+                StatusStates = new SelectList(sst, "Id", "Name", statusState),
+                TimeRange = new SelectList(trt, "Id", "Name")
             };
 
             return View(viewModel);
