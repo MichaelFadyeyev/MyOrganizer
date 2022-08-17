@@ -27,6 +27,10 @@
         &nbsp;&nbsp;
         <select name="statusState" asp-items="Model.StatusStates" class="form-control"></select>
         &nbsp;&nbsp;&nbsp;
+        <label class="control-label">Час:</label>
+        &nbsp;&nbsp;
+        <select name="timeRange" asp-items="Model.TimeRange" class="form-control"></select>
+        &nbsp;&nbsp;&nbsp;
 
 
         <input type="submit" value="Обрати" class="btn btn-success" />
@@ -90,4 +94,4 @@
     </tbody>
 </table>
 <br />
-<page-link page-model="Model.Paginator" page-action="Index" ></page-link>
+<page-link page-model="Model.Paginator" page-action="Index"></page-link>
