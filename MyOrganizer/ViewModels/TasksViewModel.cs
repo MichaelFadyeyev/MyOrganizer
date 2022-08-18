@@ -16,6 +16,7 @@ namespace MyOrganizer.ViewModels
         public PageViewModel Paginator { get; set; }
         public SelectList StatusStates { get; set; }
         public SelectList TimeRange { get; set; }
+        public SelectList TasksOnPage { get; set; }
 
     }
 }

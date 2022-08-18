@@ -22,19 +22,34 @@ namespace MyOrganizer.Controllers
         }
 
         // GET: MyTasks
-        public async Task<IActionResult> Index([Bind("AppUser.Name")] int? categoryId, int? statusState, string userName, TasksViewModel tvm, int pageNumber = 1)
+        public async Task<IActionResult> Index(
+            [Bind("AppUser.Name")]
+            int? categoryId,
+            int? statusState,
+            int? timeRange,
+            int? tasksOnPage,
+            TasksViewModel tvm,
+            string userName,
+            int pageNumber = 1
+            )
         {
             if (userName == null) userName = tvm.AppUser.UserName;
 
             var appUser = _context.AppUsers.Single(u => u.UserName == userName);
             var tasks = _context.Tasks.Where(t => t.AppUser == appUser).Include(t => t.Category).ToList();
 
+            #region CategoryFilter
             // фільтрація за категорією
             if (categoryId != null && categoryId != 0)
             {
                 tasks = tasks.Where(t => t.CategoryId == categoryId).ToList();
             }
 
+            List<Category> categories = await _context.Categories.ToListAsync();
+            categories.Insert(0, new Category() { Id = 0, Name = "Всі категорії" });
+            #endregion
+
+            #region StatusFilter
             // фільтрація за статусом
             if (statusState != null && statusState != 0)
             {
@@ -44,17 +59,71 @@ namespace MyOrganizer.Controllers
                 tasks = tasks.Where(t => t.IsDone == status).ToList();
             }
 
-            int pageSize = 3;
-            int count = tasks.Count;
-
-            List<Category> categories = await _context.Categories.ToListAsync();
-            categories.Insert(0, new Category() { Id = 0, Name = "Всі категорії" });
-
             var sst = new StatusStatesTemplate().Template;
+            #endregion
+
+            #region TimeRangeFilter
+            // фільтрація за часовим діапазоном
+            DateTime todayDate = DateTime.Now.Date;
+            DateTime startDate = new ();
+            DateTime endDate = new();
+
+            switch (timeRange)
+            {
+                case 1:
+                    startDate = todayDate.AddDays(-1);
+                    endDate = todayDate;
+                    break;
+                case 2:
+                    startDate = todayDate;
+                    endDate = todayDate;
+                    break;
+                case 3:
+                    startDate = todayDate;
+                    endDate = todayDate.AddDays(1);
+                    break;
+                case 4:
+                    startDate = todayDate;
+                    endDate = todayDate.AddDays(7);
+                    break;
+                case 5:
+                    startDate = todayDate;
+                    endDate = todayDate.AddDays(30);
+                    break;
+            }
+
+            if (timeRange != null && timeRange != 0)
+            {
+                tasks = tasks.Where(t => t.PublishDate >= startDate &&
+                t.PublishDate <= endDate).ToList();
+            }
+
             var trt = new TimeRangesTemplate().Template;
+            #endregion
+
+            #region Tasks on page
+            // встановлення кількості задач на сторінці
+            int pageSize = 3;
+
+            switch (tasksOnPage)
+            {
+                case 1:
+                    pageSize = 3;
+                    break;
+                case 2:
+                    pageSize = 5;
+                    break;
+                case 3:
+                    pageSize = 10;
+                    break;
+            }
+
+            int count = tasks.Count;
+            var top = new TasksOnPageTemplate().Template;
 
             PageViewModel paginator = new(count, pageNumber, pageSize, userName);
-
+            #endregion
+       
             TasksViewModel viewModel = new()
             {
                 Tasks = tasks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(),
@@ -62,7 +131,8 @@ namespace MyOrganizer.Controllers
                 AppUser = appUser,
                 Paginator = paginator,
                 StatusStates = new SelectList(sst, "Id", "Name", statusState),
-                TimeRange = new SelectList(trt, "Id", "Name")
+                TimeRange = new SelectList(trt, "Id", "Name", timeRange),
+                TasksOnPage = new SelectList(top, "Id", "Name", tasksOnPage),
             };
 
             return View(viewModel);
@@ -207,7 +277,7 @@ namespace MyOrganizer.Controllers
             return RedirectToAction(nameof(Index), new
             {
                 categoryId,
-                userName,
+                userName
             });
         }
 
