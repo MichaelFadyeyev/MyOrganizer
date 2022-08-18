@@ -277,7 +277,7 @@ namespace MyOrganizer.Controllers
             return RedirectToAction(nameof(Index), new
             {
                 categoryId,
-                userName,
+                userName
             });
         }
 
